@@ -36,8 +36,8 @@ Open: **http://localhost:3000**
 ## Admin Login
 | Field    | Value              |
 |----------|--------------------|
-| Email    | admin@codeiq.com   |
-| Password | admin123           |
+| Email    | neven@codeiq.com   |
+| Password | neven12           |
 
 ---
 
