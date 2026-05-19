@@ -1,12 +1,6 @@
-# CodeIQ — Smart Programming Quiz App
+ CodeIQ — Smart Programming Quiz App
 
-A full-stack quiz web app powered by **Groq AI** (free, fast LLM API).
-Users take randomized quizzes in Python, MySQL, and C++, or paste their
-own code and receive AI-generated questions tailored to it.
 
----
-
-## Quick Start
 
 ### 1. Install dependencies
 ```bash
@@ -18,12 +12,7 @@ npm install
 ```bash
 cp .env.example .env
 ```
-Open `.env` and paste your key:
-```
-GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
-PORT=3000
-```
-Get a **free** key at: https://console.groq.com → API Keys
+
 
 ### 3. Run
 ```bash
@@ -75,15 +64,3 @@ codeiq/
 - **Responsive** — works on mobile and desktop
 
 ---
-
-## Groq Free Tier Limits
-Groq's free tier allows ~30 requests/minute and ~14,400/day — more than enough
-for personal or small-group use. No credit card required.
-
----
-
-## Deployment
-For a live server (Railway, Render, VPS etc.):
-1. Push the `codeiq/` folder
-2. Set `GROQ_API_KEY` as an environment variable
-3. Run `npm start` or use PM2: `pm2 start server.js --name codeiq`
