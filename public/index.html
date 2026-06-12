@@ -10,7 +10,6 @@
 </head>
 <body>
 
-<!-- ===== NAVIGATION ===== -->
 <nav id="main-nav">
   <div class="nav-logo" onclick="goPage('home')">
     <i class="ti ti-code"></i> CodeIQ
@@ -26,10 +25,8 @@
   </div>
 </nav>
 
-<!-- ===== PAGE 1: HOME ===== -->
 <div class="page active" id="page-home">
 
-  <!-- Hero -->
   <section class="hero">
     <div class="hero-inner">
       <h1>Level Up Your<br><span class="grad-text">Coding Skills</span></h1>
@@ -63,7 +60,7 @@
         <span class="c-keyword">return</span> n
     <span class="c-keyword">return</span> fibonacci(n-<span class="c-num">1</span>) + fibonacci(n-<span class="c-num">2</span>)
 
-<span class="c-comment"># What is the time complexity?</span>
+# What is the time complexity?
 <span class="c-keyword">print</span>(fibonacci(<span class="c-num">10</span>))</pre>
         <div class="cp-options">
           <div class="cp-opt cp-wrong">A. O(n)</div>
@@ -75,7 +72,6 @@
     </div>
   </section>
 
-  <!-- Features -->
   <section class="features" id="features">
     <div class="section-head">
       <h2>Everything you need to master code</h2>
@@ -115,7 +111,6 @@
     </div>
   </section>
 
-  <!-- How it works -->
   <section class="howto">
     <div class="section-head">
       <h2>How it works</h2>
@@ -142,7 +137,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-logo"><i class="ti ti-code"></i> CodeIQ</div>
@@ -150,11 +144,7 @@
     </div>
   </footer>
 
-</div><!-- end page-home -->
-
-
-<!-- ===== PAGE 2: LANGUAGE SELECT ===== -->
-<div class="page" id="page-lang">
+</div><div class="page" id="page-lang">
   <div class="inner-page">
     <button class="back-btn" onclick="goPage('home')">
       <i class="ti ti-arrow-left"></i> Back to Home
@@ -199,7 +189,6 @@
 
     <div class="divider-row"><span>or</span></div>
 
-    <!-- Code-based quiz section -->
     <div class="code-section">
       <div class="cs-header">
         <div class="feat-icon fi-teal" style="width:38px;height:38px;font-size:17px"><i class="ti ti-code-plus"></i></div>
@@ -227,11 +216,7 @@
       </button>
     </div>
   </div>
-</div><!-- end page-lang -->
-
-
-<!-- ===== PAGE 3: QUIZ ===== -->
-<div class="page" id="page-quiz">
+</div><div class="page" id="page-quiz">
   <div class="quiz-wrap">
     <div class="quiz-topbar">
       <button class="back-btn" onclick="confirmExit()">
@@ -250,11 +235,7 @@
     </div>
     <div id="quiz-body"></div>
   </div>
-</div><!-- end page-quiz -->
-
-
-<!-- ===== PAGE 4: RESULTS ===== -->
-<div class="page" id="page-results">
+</div><div class="page" id="page-results">
   <div class="results-wrap">
     <div class="results-card">
       <h2>Quiz Complete!</h2>
@@ -284,11 +265,7 @@
       </div>
     </div>
   </div>
-</div><!-- end page-results -->
-
-
-<!-- ===== PAGE 5: ADMIN PANEL ===== -->
-<div class="page" id="page-admin">
+</div><div class="page" id="page-admin">
   <div class="admin-wrap">
     <div class="admin-topbar">
       <div>
@@ -394,11 +371,7 @@
     </div>
 
   </div>
-</div><!-- end page-admin -->
-
-
-<!-- ===== USER SIGN-IN MODAL ===== -->
-<div class="modal-overlay hidden" id="modal-user">
+</div><div class="modal-overlay hidden" id="modal-user">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('user')"><i class="ti ti-x"></i></button>
     <div class="modal-icon mi-purple"><i class="ti ti-user-circle"></i></div>
@@ -423,7 +396,6 @@
   </div>
 </div>
 
-<!-- ===== ADMIN LOGIN MODAL ===== -->
 <div class="modal-overlay hidden" id="modal-admin">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('admin')"><i class="ti ti-x"></i></button>
@@ -431,10 +403,6 @@
     <h2>Admin Login</h2>
     <p>Secure access to the CodeIQ dashboard</p>
     <div class="form-err hidden" id="admin-err"></div>
-    <div class="demo-hint">
-      <i class="ti ti-info-circle"></i>
-      Demo credentials: <strong>admin@codeiq.com</strong> / <strong>admin123</strong>
-    </div>
     <div class="form-group">
       <label>Admin Email</label>
       <input type="email" id="a-email" placeholder="admin@codeiq.com">
@@ -449,7 +417,6 @@
   </div>
 </div>
 
-<!-- ===== EXIT CONFIRM MODAL ===== -->
 <div class="modal-overlay hidden" id="modal-exit">
   <div class="modal-box" style="max-width:380px;text-align:center">
     <div class="modal-icon mi-red"><i class="ti ti-alert-triangle"></i></div>
