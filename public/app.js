@@ -7,8 +7,8 @@
 'use strict';
 
 /* ---------- Constants ---------- */
-const ADMIN_EMAIL = 'admin@codeiq.com';
-const ADMIN_PASS  = 'admin123';
+const ADMIN_EMAIL = 'neven@codeiq.com';
+const ADMIN_PASS  = 'messi10';
 
 /* ---------- App State ---------- */
 const state = {
