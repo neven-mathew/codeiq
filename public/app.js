@@ -7,8 +7,8 @@
 'use strict';
 
 /* ---------- Constants ---------- */
-const ADMIN_EMAIL = 'neven@codeiq.com';
-const ADMIN_PASS  = 'neven12';
+const ADMIN_EMAIL = 'admin@codeiq.com';
+const ADMIN_PASS  = 'admin123';
 
 /* ---------- App State ---------- */
 const state = {
@@ -138,7 +138,17 @@ function loginUser() {
     showErr(errEl, 'Please fill in all fields.');
     return;
   }
-  if (!/\S+@\S+\.\S+/.test(email)) {
+  // Block HTML tags and script-injection characters in name
+  if (/[<>"'`]/.test(name) || name.length > 60) {
+    showErr(errEl, 'Name contains invalid characters.');
+    return;
+  }
+  // Only allow plain text names (letters, spaces, hyphens, dots)
+  if (!/^[a-zA-Z\s\-\.]{2,60}$/.test(name)) {
+    showErr(errEl, 'Name must contain letters only (2–60 characters).');
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 100) {
     showErr(errEl, 'Enter a valid email address.');
     return;
   }
@@ -193,13 +203,31 @@ function updateUserNav() {
 
   if (state.user) {
     loginBtn.style.display = 'none';
-    const initials = state.user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    pillSpan.innerHTML = `
-      <span class="user-pill">
-        <span class="avatar-sm">${initials}</span>
-        ${state.user.name}
-      </span>
-      <button class="nav-btn btn-ghost" onclick="logoutUser()" style="margin-left:4px">Sign Out</button>`;
+
+    // Safe DOM construction — no innerHTML with user data
+    const rawName   = String(state.user.name || '');
+    const initials  = rawName.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+
+    const pill      = document.createElement('span');
+    pill.className  = 'user-pill';
+
+    const avatar    = document.createElement('span');
+    avatar.className = 'avatar-sm';
+    avatar.textContent = initials;         // textContent — safe
+
+    const nameNode  = document.createTextNode('\u00A0' + rawName); // safe text node
+
+    const signOut   = document.createElement('button');
+    signOut.className = 'nav-btn btn-ghost';
+    signOut.style.marginLeft = '4px';
+    signOut.textContent = 'Sign Out';      // textContent — safe
+    signOut.addEventListener('click', logoutUser);
+
+    pill.appendChild(avatar);
+    pill.appendChild(nameNode);
+    pillSpan.innerHTML = '';               // clear first
+    pillSpan.appendChild(pill);
+    pillSpan.appendChild(signOut);
   } else {
     loginBtn.style.display = '';
     pillSpan.innerHTML = '';
@@ -623,8 +651,8 @@ function loadAdminData() {
         <tr>
           <td>${escHtml(a.user)}</td>
           <td><span class="badge badge-purple">${escHtml(a.lang)}</span></td>
-          <td>${a.score || '—'}</td>
-          <td><span class="badge ${a.type === 'Code' ? 'badge-orange' : 'badge-blue'}">${a.type}</span></td>
+          <td>${escHtml(a.score) || '—'}</td>
+          <td><span class="badge ${a.type === 'Code' ? 'badge-orange' : 'badge-blue'}">${escHtml(a.type)}</span></td>
           <td style="color:var(--text3);font-size:.82rem">${new Date(a.time).toLocaleString('en-IN')}</td>
         </tr>`).join('')
     : '<tr class="empty-row"><td colspan="5">No quiz activity yet</td></tr>';
@@ -652,12 +680,19 @@ function adminTab(name, el) {
    ========================================================= */
 
 function escHtml(str) {
-  if (!str) return '';
+  if (str === null || str === undefined) return '';
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
+}
+
+// Safe DOM text setter — never use innerHTML for user data
+function safeText(el, text) {
+  if (el) el.textContent = String(text || '');
 }
 
 /* =========================================================
