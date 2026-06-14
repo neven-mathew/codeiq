@@ -1,35 +1,6 @@
  CodeIQ — Smart Programming Quiz App
 
 
-
-### 1. Install dependencies
-```bash
-cd codeiq
-npm install
-```
-
-### 2. Set your Groq API key
-```bash
-cp .env.example .env
-```
-
-
-### 3. Run
-```bash
-npm start
-```
-Open: **http://localhost:3000**
-
----
-
-## Admin Login
-| Field    | Value              |
-|----------|--------------------|
-| Email    | neven@codeiq.com   |
-| Password | neven12           |
-
----
-
 ## File Structure
 ```
 codeiq/
