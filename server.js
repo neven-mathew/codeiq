@@ -152,5 +152,5 @@ app.listen(PORT, () => {
     console.log(`   Groq API key: ⚠️  NOT SET — quiz generation will fail`);
     console.log(`   Fix: edit .env → GROQ_API_KEY=gsk_...`);
   }
-  console.log(`   Admin login:  admin@codeiq.com / admin123\n`);
+  
 });
