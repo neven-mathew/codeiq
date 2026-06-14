@@ -1,5 +1,5 @@
 /* ======================================================
-   CodeIQ — app.js
+   CodeIQ — app.js (SECURITY HARDENED)
    All client-side logic: routing, auth, quiz engine,
    admin dashboard, question deduplication
    ====================================================== */
@@ -47,9 +47,12 @@ function init() {
   updateUserNav();
 
   // Allow Enter key in admin login modal
-  document.getElementById('a-pass').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') loginAdmin();
-  });
+  const passField = document.getElementById('a-pass');
+  if (passField) {
+    passField.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') loginAdmin();
+    });
+  }
 }
 
 /* =========================================================
@@ -75,7 +78,7 @@ function todayKey() {
 
 function restoreSession() {
   const saved = getData('ciq_session');
-  if (saved) {
+  if (saved && saved.email) {
     const users = getData('ciq_users') || [];
     const found = users.find(u => u.email === saved.email);
     if (found) { state.user = found; }
@@ -83,7 +86,9 @@ function restoreSession() {
 }
 
 function saveSession() {
-  if (state.user) setData('ciq_session', { email: state.user.email });
+  if (state.user && state.user.email) {
+    setData('ciq_session', { email: state.user.email });
+  }
 }
 
 function clearSession() {
@@ -120,7 +125,7 @@ function confirmExit() {
 }
 
 /* =========================================================
-   USER AUTHENTICATION
+   USER AUTHENTICATION (SECURITY HARDENED)
    ========================================================= */
 
 function loginUser() {
@@ -134,14 +139,33 @@ function loginUser() {
     showErr(errEl, 'Please fill in all fields.');
     return;
   }
-  if (!/\S+@\S+\.\S+/.test(email)) {
-    showErr(errEl, 'Enter a valid email address.');
+
+  // Block HTML tags and script-injection characters in name
+  if (/[<>"'`]/.test(name) || name.length > 60) {
+    showErr(errEl, 'Name contains invalid characters.');
     return;
   }
-  if (!/^[\d\s\+\-\(\)]{7,15}$/.test(phone)) {
-    showErr(errEl, 'Enter a valid phone number.');
+
+  // Only allow plain text names (letters, spaces, hyphens, dots)
+  if (!/^[a-zA-Z\s\-\.]{2,60}$/.test(name)) {
+    showErr(errEl, 'Name must contain letters only (2–60 characters).');
     return;
   }
+
+  // Email validation — RFC 5322 simplified
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  if (!emailRegex.test(email) || email.length > 100) {
+    showErr(errEl, 'Enter a valid email address (e.g., user@domain.com).');
+    return;
+  }
+
+  // Phone: allow +country-code format, 10-15 digits total
+  const digitsOnly = phone.replace(/\D/g, '');
+  if (digitsOnly.length < 10 || digitsOnly.length > 15 || !/^[\d\s\+\-\(\)]{10,20}$/.test(phone)) {
+    showErr(errEl, 'Enter a valid phone number (10-15 digits, e.g., +91 98765 43210).');
+    return;
+  }
+
   errEl.classList.add('hidden');
 
   const users = getData('ciq_users') || [];
@@ -187,15 +211,33 @@ function updateUserNav() {
   const loginBtn = document.getElementById('btn-login-nav');
   const pillSpan = document.getElementById('user-pill-nav');
 
-  if (state.user) {
+  if (state.user && state.user.name) {
     loginBtn.style.display = 'none';
-    const initials = state.user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    pillSpan.innerHTML = `
-      <span class="user-pill">
-        <span class="avatar-sm">${initials}</span>
-        ${state.user.name}
-      </span>
-      <button class="nav-btn btn-ghost" onclick="logoutUser()" style="margin-left:4px">Sign Out</button>`;
+
+    // Safe DOM construction — no innerHTML with user data
+    const rawName   = String(state.user.name || '');
+    const initials  = rawName.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+
+    const pill      = document.createElement('span');
+    pill.className  = 'user-pill';
+
+    const avatar    = document.createElement('span');
+    avatar.className = 'avatar-sm';
+    avatar.textContent = initials;         // textContent — safe
+
+    const nameNode  = document.createTextNode('\u00A0' + rawName); // safe text node
+
+    const signOut   = document.createElement('button');
+    signOut.className = 'nav-btn btn-ghost';
+    signOut.style.marginLeft = '4px';
+    signOut.textContent = 'Sign Out';      // textContent — safe
+    signOut.addEventListener('click', logoutUser);
+
+    pill.appendChild(avatar);
+    pill.appendChild(nameNode);
+    pillSpan.innerHTML = '';               // clear first
+    pillSpan.appendChild(pill);
+    pillSpan.appendChild(signOut);
   } else {
     loginBtn.style.display = '';
     pillSpan.innerHTML = '';
@@ -203,12 +245,14 @@ function updateUserNav() {
 }
 
 function showErr(el, msg) {
-  el.textContent = msg;
-  el.classList.remove('hidden');
+  if (el) {
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
 }
 
 /* =========================================================
-   ADMIN AUTHENTICATION (SECURED)
+   ADMIN AUTHENTICATION (SERVER-SIDE)
    ========================================================= */
 
 async function loginAdmin() {
@@ -601,15 +645,18 @@ function loadAdminData() {
   // Users table
   const ubody = document.getElementById('admin-users-body');
   ubody.innerHTML = users.length
-    ? users.map(u => `
+    ? users.map(u => {
+        const joinedDate = u.joined ? new Date(u.joined).toLocaleDateString('en-IN') : '—';
+        return `
         <tr>
           <td><strong>${escHtml(u.name)}</strong></td>
           <td>${escHtml(u.email)}</td>
           <td>${escHtml(u.phone)}</td>
-          <td>${u.joined ? new Date(u.joined).toLocaleDateString('en-IN') : '—'}</td>
-          <td><span class="badge badge-blue">${u.quizzes || 0}</span></td>
+          <td>${escHtml(joinedDate)}</td>
+          <td><span class="badge badge-blue">${parseInt(u.quizzes) || 0}</span></td>
           <td><span class="badge badge-green">Active</span></td>
-        </tr>`).join('')
+        </tr>`;
+      }).join('')
     : '<tr class="empty-row"><td colspan="6">No registered users yet</td></tr>';
 
   // Visits table
@@ -622,11 +669,11 @@ function loadAdminData() {
         const topLang = Object.entries(langs).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
         return `
           <tr>
-            <td>${d}</td>
+            <td>${escHtml(d)}</td>
             <td>${v.count}</td>
             <td>${v.newUsers || 0}</td>
             <td>${v.codeQuizzes || 0}</td>
-            <td><span class="badge badge-purple">${topLang}</span></td>
+            <td><span class="badge badge-purple">${escHtml(topLang)}</span></td>
           </tr>`;
       }).join('')
     : '<tr class="empty-row"><td colspan="5">No visit data yet</td></tr>';
@@ -638,8 +685,8 @@ function loadAdminData() {
         <tr>
           <td>${escHtml(a.user)}</td>
           <td><span class="badge badge-purple">${escHtml(a.lang)}</span></td>
-          <td>${a.score || '—'}</td>
-          <td><span class="badge ${a.type === 'Code' ? 'badge-orange' : 'badge-blue'}">${a.type}</span></td>
+          <td>${escHtml(a.score) || '—'}</td>
+          <td><span class="badge ${a.type === 'Code' ? 'badge-orange' : 'badge-blue'}">${escHtml(a.type)}</span></td>
           <td style="color:var(--text3);font-size:.82rem">${new Date(a.time).toLocaleString('en-IN')}</td>
         </tr>`).join('')
     : '<tr class="empty-row"><td colspan="5">No quiz activity yet</td></tr>';
@@ -667,12 +714,14 @@ function adminTab(name, el) {
    ========================================================= */
 
 function escHtml(str) {
-  if (!str) return '';
+  if (str === null || str === undefined) return '';
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
 }
 
 /* =========================================================
