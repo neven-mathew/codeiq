@@ -133,7 +133,7 @@ ${code}
 
   try {
     const completion = await groq.chat.completions.create({
-      model:       'llama-3.3-70b-versatile',
+      model:       'qwen-2.5-72b',  // ✅ NEW MODEL - Updated from llama-3.3-70b-versatile
       temperature: 0.7,
       max_tokens:  2000,
       messages: [
@@ -183,6 +183,7 @@ app.listen(PORT, () => {
   console.log(`\n✅ CodeIQ server running at http://localhost:${PORT}`);
   if (GROQ_KEY && GROQ_KEY !== 'your_groq_api_key_here' && GROQ_KEY.length >= 10) {
     console.log(`   Groq API key: loaded ✓ (${GROQ_KEY.slice(0, 10)}...)`);
+    console.log(`   Model: Qwen 2.5 72B (updated from Llama 3.3 70B)`);
   } else {
     console.log(`   Groq API key: ⚠️  NOT SET — quiz generation will fail`);
     console.log(`   Fix: edit .env → GROQ_API_KEY=gsk_...`);
