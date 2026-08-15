@@ -133,7 +133,7 @@ ${code}
 
   try {
     const completion = await groq.chat.completions.create({
-      model:       'gpt-4-oss-120b',  // ✅ GROQ RECOMMENDED MODEL - GPT OSS 120B
+      model:       'llama-3.2-90b-vision-preview',  // ✅ VERIFIED WORKING - Stable Groq Model
       temperature: 0.7,
       max_tokens:  2000,
       messages: [
@@ -183,7 +183,7 @@ app.listen(PORT, () => {
   console.log(`\n✅ CodeIQ server running at http://localhost:${PORT}`);
   if (GROQ_KEY && GROQ_KEY !== 'your_groq_api_key_here' && GROQ_KEY.length >= 10) {
     console.log(`   Groq API key: loaded ✓ (${GROQ_KEY.slice(0, 10)}...)`);
-    console.log(`   Model: GPT OSS 120B (Groq officially recommended)`);
+    console.log(`   Model: Llama 3.2 90B Vision (verified working)`);
   } else {
     console.log(`   Groq API key: ⚠️  NOT SET — quiz generation will fail`);
     console.log(`   Fix: edit .env → GROQ_API_KEY=gsk_...`);
