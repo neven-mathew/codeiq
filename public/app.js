@@ -1,5 +1,5 @@
 /* ======================================================
-   CodeIQ — app.js (SECURITY HARDENED)
+   CodeIQ — app.js (SECURITY HARDENED + GEMINI)
    All client-side logic: routing, auth, quiz engine,
    admin dashboard, question deduplication
    ====================================================== */
@@ -447,22 +447,13 @@ async function loadQuestions(lang, code) {
 
   } catch (err) {
     console.error(err);
-    const isKeyError = err.message && (
-      err.message.toLowerCase().includes('api key') ||
-      err.message.toLowerCase().includes('authentication') ||
-      err.message.toLowerCase().includes('not configured') ||
-      err.message.toLowerCase().includes('invalid') ||
-      err.message.toLowerCase().includes('groq')
-    );
-    const helpHtml = isKeyError
-      ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 18px;margin:0 auto 1.5rem;max-width:460px;text-align:left;font-size:.86rem;color:#92400e;line-height:1.8">
+    const helpHtml = `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 18px;margin:0 auto 1.5rem;max-width:460px;text-align:left;font-size:.86rem;color:#92400e;line-height:1.8">
           <strong>How to fix:</strong><br>
-          1. Open the <code style="background:#fef3c7;padding:1px 5px;border-radius:4px">.env</code> file inside your <code style="background:#fef3c7;padding:1px 5px;border-radius:4px">codeiq/</code> folder.<br>
-          2. Set: <code style="background:#fef3c7;padding:1px 5px;border-radius:4px">GROQ_API_KEY=gsk_xxxxxxxxxx</code><br>
-          3. Get a free key at <strong>console.groq.com</strong><br>
-          4. Save the file, then <strong>restart the server</strong> with <code style="background:#fef3c7;padding:1px 5px;border-radius:4px">npm start</code>.
-        </div>`
-      : '';
+          1. Open the <code style="background:#fef3c7;padding:1px 5px;border-radius:4px">.env</code> file in your <code style="background:#fef3c7;padding:1px 5px;border-radius:4px">codeiq/</code> folder.<br>
+          2. Set: <code style="background:#fef3c7;padding:1px 5px;border-radius:4px">GEMINI_API_KEY=AIz_xxxxxxxxxx</code><br>
+          3. Get your FREE key at <strong>https://makersuite.google.com/app/apikey</strong><br>
+          4. Save the file, then <strong>restart the server</strong>.
+        </div>`;
     document.getElementById('quiz-body').innerHTML =
       `<div style="text-align:center;padding:4rem 2rem">
         <div style="font-size:3rem;margin-bottom:1rem">⚠️</div>
