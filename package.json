@@ -4,22 +4,11 @@
   "description": "AI-powered programming quiz platform",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
-  "keywords": [
-    "quiz",
-    "programming",
-    "ai",
-    "groq"
-  ],
-  "author": "Neven Mathew",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "groq-sdk": "^0.4.0",
     "dotenv": "^16.3.1"
   }
 }
-PKEOF
-echo "✅ Updated package.json with groq-sdk"
