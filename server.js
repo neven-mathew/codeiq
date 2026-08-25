@@ -3,7 +3,6 @@ const express = require('express');
 const path    = require('path');
 const Groq    = require('groq-sdk');
 
-// ── Startup key check ──────────────────────────────────────
 const GROQ_KEY = process.env.GROQ_API_KEY;
 if (!GROQ_KEY || GROQ_KEY === 'your_groq_api_key_here' || GROQ_KEY.length < 10) {
   console.error('\n❌ ERROR: GROQ_API_KEY is missing or not set in your .env file.');
@@ -18,7 +17,6 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ── Validation helpers ───────────────────────────────
 function validateEmail(email) {
   if (typeof email !== 'string') return false;
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -36,7 +34,6 @@ function validateName(name) {
   return /^[a-zA-Z\s\-\.]{2,60}$/.test(name) && !/[<>"'`]/.test(name);
 }
 
-// ── Input sanitisation helpers ───────────────────────────
 const ALLOWED_LANGS = ['Python', 'MySQL', 'C++', 'General'];
 
 function sanitizeText(str, maxLen = 500) {
@@ -64,7 +61,6 @@ function sanitizeSeenList(arr) {
     .filter(Boolean);
 }
 
-// ── Secure Admin Login Endpoint ───────────────────────────
 app.post('/api/admin-login', (req, res) => {
   const { email, pass } = req.body;
   const SECURE_ADMIN_EMAIL = 'neven@codeiq.com';
@@ -77,7 +73,6 @@ app.post('/api/admin-login', (req, res) => {
   }
 });
 
-// ── Quiz generation endpoint using Groq ────────────────────
 app.post('/api/generate-questions', async (req, res) => {
   const rawLang  = req.body.lang;
   const rawCode  = req.body.code;
@@ -114,7 +109,7 @@ Rules:
 
   try {
     const completion = await groq.chat.completions.create({
-      model:       'mixtral-8x7b-32768',  // Stable, proven Groq model
+      model:       'llama-3.2-90b-vision-preview',  // Updated model
       temperature: 0.7,
       max_tokens:  1500,
       messages: [
@@ -142,7 +137,6 @@ Rules:
       throw new Error('Invalid question format');
     }
 
-    // Ensure exactly 5 questions
     while (parsed.questions.length < 5) {
       parsed.questions.push({
         question: `What is a ${lang} best practice?`,
@@ -161,21 +155,18 @@ Rules:
   }
 });
 
-// ── SPA fallback ──────────────────────────────────────────
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ── Start ─────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`\n✅ CodeIQ server running at http://localhost:${PORT}`);
   if (GROQ_KEY && GROQ_KEY !== 'your_groq_api_key_here' && GROQ_KEY.length >= 10) {
     console.log(`   Groq API key: loaded ✓`);
-    console.log(`   Model: Mixtral 8x7B (stable)`);
+    console.log(`   Model: Llama 3.2 90B Vision (latest stable)`);
   } else {
     console.log(`   Groq API key: ⚠️  NOT SET`);
-    console.log(`   Get free key at: https://console.groq.com`);
   }
   console.log(`   Admin login:  neven@codeiq.com / messi10\n`);
 });
