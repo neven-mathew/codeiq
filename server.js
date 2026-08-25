@@ -98,9 +98,8 @@ app.post('/api/generate-questions', async (req, res) => {
   const systemPrompt = `You are a programming quiz generator. Output ONLY valid JSON. No markdown, no backticks.
 {"questions":[{"question":"text","code":"snippet or empty","options":["A","B","C","D"],"correct":0,"explanation":"why"}]}
 Rules:
-- "correct" is 0, 1, 2, or 3 (the right answer index)
+- "correct" is 0, 1, 2, or 3
 - Mix easy, medium, hard questions
-- Use "code" field for code examples, leave empty if not needed
 - All 5 questions must be different topics`;
 
   const userMsg = code
@@ -109,7 +108,7 @@ Rules:
 
   try {
     const completion = await groq.chat.completions.create({
-      model:       'llama-3.2-90b-vision-preview',  // Updated model
+      model:       'groq-3.2-11b-text-preview',
       temperature: 0.7,
       max_tokens:  1500,
       messages: [
@@ -164,7 +163,7 @@ app.listen(PORT, () => {
   console.log(`\n✅ CodeIQ server running at http://localhost:${PORT}`);
   if (GROQ_KEY && GROQ_KEY !== 'your_groq_api_key_here' && GROQ_KEY.length >= 10) {
     console.log(`   Groq API key: loaded ✓`);
-    console.log(`   Model: Llama 3.2 90B Vision (latest stable)`);
+    console.log(`   Model: Groq 3.2 11B Text (stable)`);
   } else {
     console.log(`   Groq API key: ⚠️  NOT SET`);
   }
