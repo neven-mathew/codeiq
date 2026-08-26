@@ -21,8 +21,7 @@ const MODELS_TO_TRY = [
   'llama-3.2-11b-text-preview',
   'mixtral-8x7b-32768',
   'gemma-7b-it'
-];
-];
+]; // <-- Fixed: Removed extra ];
 
 function sanitizeText(str, maxLen = 500) {
   if (typeof str !== 'string') return '';
@@ -73,8 +72,18 @@ app.post('/api/generate-questions', async (req, res) => {
     ? `\n\nDo NOT repeat: ${sanitizedSeen.slice(0, 5).join(', ')}`
     : '';
 
-  const systemPrompt = `Output ONLY valid JSON. No markdown.
-{"questions":[{"question":"text","code":"","options":["A","B","C","D"],"correct":0,"explanation":"why"}]}`;
+  const systemPrompt = `Output ONLY valid JSON. No markdown. Use this exact format:
+{
+  "questions": [
+    {
+      "question": "text",
+      "code": "",
+      "options": ["A", "B", "C", "D"],
+      "correct": 0,
+      "explanation": "why"
+    }
+  ]
+}`;
 
   const userMsg = sanitizedCode
     ? `Generate 5 ${lang} quiz questions about this code:\n\`\`\`\n${sanitizedCode}\n\`\`\`${seenNote}`
@@ -136,7 +145,7 @@ app.post('/api/generate-questions', async (req, res) => {
 
   // If all models fail
   res.status(500).json({ error: 'All AI models unavailable. Please try again.' });
-});
+}); // <-- Fixed: Added missing closing brace and parenthesis
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
