@@ -17,11 +17,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Groq's officially recommended models (in priority order)
 const MODELS_TO_TRY = [
-  'gpt-4o-oss-120b',        // GPT OSS 120B - Groq official recommendation
-  'qwen-qwq-32b',           // Qwen 32B - Groq official recommendation
-  'mixtral-8x7b-32768',     // Fallback
-  'llama-3.1-70b-versatile', // Fallback
-  'gemma-7b-it'             // Fallback
+  'llama-3.1-8b-instant',
+  'llama-3.2-11b-text-preview',
+  'mixtral-8x7b-32768',
+  'gemma-7b-it'
+];
 ];
 
 function sanitizeText(str, maxLen = 500) {
